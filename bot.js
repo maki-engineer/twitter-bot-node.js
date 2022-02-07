@@ -542,7 +542,9 @@ let number_of_people_followed = 0;  // フォローした人数
                             }
                           });
                           db.run(`delete from followslist where name = ?`, followers.screen_name);
-                          number_of_people_followed--;
+                          if(number_of_people_followed !== 0){
+                            number_of_people_followed--;
+                          }
                         }else{
                           bot.lilyBot.post(api.createFollow, {user_id: followers.id_str}, function(err, follow, res) {
                             if(err) {
