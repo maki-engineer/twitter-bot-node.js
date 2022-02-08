@@ -878,11 +878,15 @@ let number_of_people_followed = 0;  // フォローした人数
                 }
               });
           
-              // 最後までフォロー一覧を見終わったらまた最初から見れるように
-              if(follows.next_cursor_str === "0"){
+              try{
+                // 最後までフォロー一覧を見終わったらまた最初から見れるように
+                if(follows.next_cursor_str === "0"){
+                  db.run("update followNextcursor set bool = ?", 0);
+                }else{
+                  db.run("update followNextcursor set cursor = ?", follows.next_cursor_str);
+                }
+              }catch{
                 db.run("update followNextcursor set bool = ?", 0);
-              }else{
-                db.run("update followNextcursor set cursor = ?", follows.next_cursor_str);
               }
             });
           }
