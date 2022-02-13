@@ -812,21 +812,29 @@ let number_of_people_followed = 0;  // フォローした人数
                   
                   // 関係性を調べる
                   bot.lilyBot.get(api.searchRelationship, {screen_name: liftUsers}, function(err, relationships, res) {
-                    for(let relationship of relationships){
-                      if(relationship.connections.includes("followed_by") === false){
-                        bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
-                          if(err){
-                            console.log(err);
-                          }else{
-                            console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+                    if(err){
+                      console.log(err);
+                    }else{
+                      if(relationships){
+                        if(relationships.length >= 1){
+                          for(let relationship of relationships){
+                            if(relationship.connections.includes("followed_by") === false){
+                              bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
+                                if(err){
+                                  console.log(err);
+                                }else{
+                                  console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+                                }
+                              });
+                
+                              db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
+                                if(err){
+                                  return;
+                                }
+                              });
+                            }
                           }
-                        });
-          
-                        db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
-                          if(err){
-                            return;
-                          }
-                        });
+                        }
                       }
                     }
                   });
@@ -857,21 +865,29 @@ let number_of_people_followed = 0;  // フォローした人数
                   
                   // 関係性を調べる
                   bot.lilyBot.get(api.searchRelationship, {screen_name: liftUsers}, function(err, relationships, res) {
-                    for(let relationship of relationships){
-                      if(relationship.connections.includes("followed_by") === false){
-                        bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
-                          if(err){
-                            console.log(err);
-                          }else{
-                            console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+                    if(err){
+                      console.log(err);
+                    }else{
+                      if(relationships){
+                        if(relationships.length >= 1){
+                          for(let relationship of relationships){
+                            if(relationship.connections.includes("followed_by") === false){
+                              bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
+                                if(err){
+                                  console.log(err);
+                                }else{
+                                  console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+                                }
+                              });
+                
+                              db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
+                                if(err){
+                                  return;
+                                }
+                              });
+                            }
                           }
-                        });
-          
-                        db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
-                          if(err){
-                            return;
-                          }
-                        });
+                        }
                       }
                     }
                   });
