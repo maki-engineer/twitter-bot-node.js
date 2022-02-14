@@ -792,107 +792,115 @@ let number_of_people_followed = 0;  // フォローした人数
         db.all("select * from followNextcursor", (err, rows) => {
           if(rows[0].bool === 0){
             bot.lilyBot.get(api.followList, api.maki_lily_bot, function(err, follows, res){
-              db.all("select name from followslist", (err, alreadyfollows) => {
-                // テーブルのscreen_nameだけを配列にする
-                let alreadyfollowsAry = alreadyfollows.map(obj => obj.name);
-          
-                // 自分からフォローしたアカウントを排除した配列
-                let liftFollowusers = follows.users.filter((value) => {return ! alreadyfollowsAry.includes(value.screen_name);});
-                
-                // screen_nameだけを取って配列にする ２０人ずつ関係性を調べる
-                let relationshipUsers = liftFollowusers.map(obj => obj.screen_name);
-                
-                // ２０個ずつ分割
-                relationshipUsers = def.sliceByNumber(relationshipUsers, 20);
-          
-                // 分割した個数分関係性を調べる
-                for(let relationshipUser of relationshipUsers){
-                  // 配列の文字列を結合
-                  let liftUsers = relationshipUser.join();
-                  
-                  // 関係性を調べる
-                  bot.lilyBot.get(api.searchRelationship, {screen_name: liftUsers}, function(err, relationships, res) {
-                    if(err){
-                      console.log(err);
-                    }else{
-                      if(relationships){
-                        if(relationships.length >= 1){
-                          for(let relationship of relationships){
-                            if(relationship.connections.includes("followed_by") === false){
-                              bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
-                                if(err){
-                                  console.log(err);
-                                }else{
-                                  console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+              if(follows){
+                if(follows.users){
+                  db.all("select name from followslist", (err, alreadyfollows) => {
+                    // テーブルのscreen_nameだけを配列にする
+                    let alreadyfollowsAry = alreadyfollows.map(obj => obj.name);
+              
+                    // 自分からフォローしたアカウントを排除した配列
+                    let liftFollowusers = follows.users.filter((value) => {return ! alreadyfollowsAry.includes(value.screen_name);});
+                    
+                    // screen_nameだけを取って配列にする ２０人ずつ関係性を調べる
+                    let relationshipUsers = liftFollowusers.map(obj => obj.screen_name);
+                    
+                    // ２０個ずつ分割
+                    relationshipUsers = def.sliceByNumber(relationshipUsers, 20);
+              
+                    // 分割した個数分関係性を調べる
+                    for(let relationshipUser of relationshipUsers){
+                      // 配列の文字列を結合
+                      let liftUsers = relationshipUser.join();
+                      
+                      // 関係性を調べる
+                      bot.lilyBot.get(api.searchRelationship, {screen_name: liftUsers}, function(err, relationships, res) {
+                        if(err){
+                          console.log(err);
+                        }else{
+                          if(relationships){
+                            if(relationships.length >= 1){
+                              for(let relationship of relationships){
+                                if(relationship.connections.includes("followed_by") === false){
+                                  bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
+                                    if(err){
+                                      console.log(err);
+                                    }else{
+                                      console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+                                    }
+                                  });
+                    
+                                  db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
+                                    if(err){
+                                      return;
+                                    }
+                                  });
                                 }
-                              });
-                
-                              db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
-                                if(err){
-                                  return;
-                                }
-                              });
+                              }
                             }
                           }
                         }
-                      }
+                      });
                     }
                   });
                 }
-              });
+              }
           
               db.run("update followNextcursor set cursor = ?, bool = ?", follows.next_cursor_str, 1);
             });
           }else{
             bot.lilyBot.get(api.followList, {screen_name: "maki_lily_bot", cursor: rows[0].cursor, count: 200}, function(err, follows, res){
-              db.all("select name from followslist", (err, alreadyfollows) => {
-                // テーブルのscreen_nameだけを配列にする
-                let alreadyfollowsAry = alreadyfollows.map(obj => obj.name);
-          
-                // 自分からフォローしたアカウントを排除した配列
-                let liftFollowusers = follows.users.filter((value) => {return ! alreadyfollowsAry.includes(value.screen_name);});
-                
-                // screen_nameだけを取って配列にする ２０人ずつ関係性を調べる
-                let relationshipUsers = liftFollowusers.map(obj => obj.screen_name);
-                
-                // ２０個ずつ分割
-                relationshipUsers = def.sliceByNumber(relationshipUsers, 20);
-          
-                // 分割した個数分関係性を調べる
-                for(let relationshipUser of relationshipUsers){
-                  // 配列の文字列を結合
-                  let liftUsers = relationshipUser.join();
-                  
-                  // 関係性を調べる
-                  bot.lilyBot.get(api.searchRelationship, {screen_name: liftUsers}, function(err, relationships, res) {
-                    if(err){
-                      console.log(err);
-                    }else{
-                      if(relationships){
-                        if(relationships.length >= 1){
-                          for(let relationship of relationships){
-                            if(relationship.connections.includes("followed_by") === false){
-                              bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
-                                if(err){
-                                  console.log(err);
-                                }else{
-                                  console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+              if(follows){
+                if(follows.users){
+                  db.all("select name from followslist", (err, alreadyfollows) => {
+                    // テーブルのscreen_nameだけを配列にする
+                    let alreadyfollowsAry = alreadyfollows.map(obj => obj.name);
+              
+                    // 自分からフォローしたアカウントを排除した配列
+                    let liftFollowusers = follows.users.filter((value) => {return ! alreadyfollowsAry.includes(value.screen_name);});
+                    
+                    // screen_nameだけを取って配列にする ２０人ずつ関係性を調べる
+                    let relationshipUsers = liftFollowusers.map(obj => obj.screen_name);
+                    
+                    // ２０個ずつ分割
+                    relationshipUsers = def.sliceByNumber(relationshipUsers, 20);
+              
+                    // 分割した個数分関係性を調べる
+                    for(let relationshipUser of relationshipUsers){
+                      // 配列の文字列を結合
+                      let liftUsers = relationshipUser.join();
+                      
+                      // 関係性を調べる
+                      bot.lilyBot.get(api.searchRelationship, {screen_name: liftUsers}, function(err, relationships, res) {
+                        if(err){
+                          console.log(err);
+                        }else{
+                          if(relationships){
+                            if(relationships.length >= 1){
+                              for(let relationship of relationships){
+                                if(relationship.connections.includes("followed_by") === false){
+                                  bot.lilyBot.post(api.liftFollow, {screen_name: relationship.screen_name}, function(err, unfol, res){
+                                    if(err){
+                                      console.log(err);
+                                    }else{
+                                      console.log('\nフォロー解除した' + unfol.name + "さんをフォロー解除しました！");
+                                    }
+                                  });
+                    
+                                  db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
+                                    if(err){
+                                      return;
+                                    }
+                                  });
                                 }
-                              });
-                
-                              db.run("insert into muteusers(name) values(?)", relationship.screen_name, (err) => {
-                                if(err){
-                                  return;
-                                }
-                              });
+                              }
                             }
                           }
                         }
-                      }
+                      });
                     }
                   });
                 }
-              });
+              }
           
               try{
                 // 最後までフォロー一覧を見終わったらまた最初から見れるように
