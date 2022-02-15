@@ -407,7 +407,7 @@ let number_of_people_followed = 0;  // フォローした人数
             timeline.data = def.shuffle(timeline.data);
             timeline.count      = 0;
             bot.lilyBot.get(api.getTimeline, timeline.data[timeline.count], function(error, search, res) {
-              if(search){
+              if(Array.isArray(search)){
                 for(let timeline of search) {
                   if(timeline.retweeted === true) {
                     continue;
@@ -458,7 +458,7 @@ let number_of_people_followed = 0;  // フォローした人数
             timeline.count++;
           }else{
             bot.lilyBot.get(api.getTimeline, timeline.data[timeline.count], function(error, search, res) {
-              if(search){
+              if(Array.isArray(search)){
                 for(let timeline of search) {
                   if(timeline.retweeted === true) {
                     continue;
@@ -707,32 +707,34 @@ let number_of_people_followed = 0;  // フォローした人数
               return;
             }else{
               bot.lilyBot.get(api.listMember, /*百合の民*/{list_id: "1267302911144419329", count: 5000}, function(err, members, res){
-                for(let member of members.users){
-                  if(member.screen_name !== "maki_lily_bot"){
-                    if(member.following === false){
-                      if(member.protected === false){
-                        if(member.friends_count / member.followers_count >= 1){
-                          db.all("select * from muteusers", (err, rows) => {
-                            const check = rows.some(b => b.name === member.screen_name);
-                            if(check === false){
-                              if(number_of_people_followed < 6){
-                                if(follow === 2){
-                                  return;
-                                }else{
-                                  follow++;
-                                  number_of_people_followed++;
-                                  bot.lilyBot.post(api.createFollow, {screen_name: member.screen_name}, function(err, follow, res){
-                                    console.log('\nリストメンバーの' + member.name + "さんをフォローしました！");
-                                  });
-                                  db.run(`insert into followslist(name, month, date, year) values(?, ?, ?, ?)`, member.screen_name, today_month, today_date, today_year, (err) => {
-                                    if(err){
-                                      return;
-                                    }
-                                  });
+                if(Array.isArray(members.users)){
+                  for(let member of members.users){
+                    if(member.screen_name !== "maki_lily_bot"){
+                      if(member.following === false){
+                        if(member.protected === false){
+                          if(member.friends_count / member.followers_count >= 1){
+                            db.all("select * from muteusers", (err, rows) => {
+                              const check = rows.some(b => b.name === member.screen_name);
+                              if(check === false){
+                                if(number_of_people_followed < 6){
+                                  if(follow === 2){
+                                    return;
+                                  }else{
+                                    follow++;
+                                    number_of_people_followed++;
+                                    bot.lilyBot.post(api.createFollow, {screen_name: member.screen_name}, function(err, follow, res){
+                                      console.log('\nリストメンバーの' + member.name + "さんをフォローしました！");
+                                    });
+                                    db.run(`insert into followslist(name, month, date, year) values(?, ?, ?, ?)`, member.screen_name, today_month, today_date, today_year, (err) => {
+                                      if(err){
+                                        return;
+                                      }
+                                    });
+                                  }
                                 }
                               }
-                            }
-                          });
+                            });
+                          }
                         }
                       }
                     }
