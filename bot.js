@@ -707,7 +707,7 @@ let number_of_people_followed = 0;  // フォローした人数
               return;
             }else{
               bot.lilyBot.get(api.listMember, /*百合の民*/{list_id: "1267302911144419329", count: 5000}, function(err, members, res){
-                if(members){
+                if(members.users){
                   for(let member of members.users){
                     if(member.screen_name !== "maki_lily_bot"){
                       if(member.following === false){
