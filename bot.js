@@ -48,19 +48,31 @@ let number_of_people_followed = 0;  // フォローした人数
       {  // 挨拶ツイ
         if(morning.bool){
           try{
-            img  = require('fs').readFileSync(morning.recommended[1]);
-            text = morning.good_morning;
-            bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
-              if(err) {
-                console.log(err);
+            db.all("select * from mangaindex", (err, rows) => {
+              let mangaIndex = rows[0].num;
+              let good_morning = "おは百合です♪ 今日も１日頑張っていきましょう！\n\n今日のおすすめ作品は...\n\n" + morning.recommended[mangaIndex][0] + "です！\n\n" + morning.recommended[mangaIndex][2];
+              img  = require('fs').readFileSync(morning.recommended[mangaIndex][1]);
+              bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
+                if(err) {
+                  console.log(err);
+                }else{
+                  bot.lilyBot.post(api.createTweet, {status: good_morning, media_ids: img.media_id_string}, function(err, tweet, res) {
+                    if(err) {
+                      console.log(err);
+                    }else{
+                      console.log("\n下記の内容をツイートしました！\n\n" + tweet.text);
+                    }
+                  });
+                }
+              });
+
+              mangaIndex++;
+              
+              if(mangaIndex === morning.recommended.length){
+                mangaIndex = 0;
+                db.run("update mangaindex set num = ?", mangaIndex);
               }else{
-                bot.lilyBot.post(api.createTweet, {status: text, media_ids: img.media_id_string}, function(err, tweet, res) {
-                  if(err) {
-                    console.log(err);
-                  }else{
-                    console.log("\n下記の内容をツイートしました！\n\n" + tweet.text);
-                  }
-                });
+                db.run("update mangaindex set num = ?", mangaIndex);
               }
             });
 
