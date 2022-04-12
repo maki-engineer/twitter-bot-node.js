@@ -207,8 +207,8 @@ let number_of_people_followed = 0;  // フォローした人数
         if((today_hour === 18) && (today_min === 0)){
           db.all("select * from mangaindex3", (err, rows) => {
             let mangaIndex = rows[0].num;
-            text = manga_author.data[mangaIndex][0];
-            img = require('fs').readFileSync(manga_author.data[mangaIndex][1]);
+            text = "#百合著者紹介\n\n" + manga_author.data[mangaIndex][0] + " 先生 (@ " + manga_author.data[mangaIndex][1] + ")\n\n代表作品：『" + manga_author.data[mangaIndex][2] + "』";
+            img = require('fs').readFileSync(manga_author.data[mangaIndex][3]);
 
             bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
               if(err) {
