@@ -22,6 +22,9 @@ hashtag.js
 # 紹介する漫画データ
 manga-introduction.js
 
+# 紹介する著者データ
+manga-author.js
+
 # 朝に紹介する漫画データ
 morning.js
 

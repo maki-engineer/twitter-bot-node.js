@@ -10,6 +10,7 @@ const def                 = require("./function");                  // 関数デ
 const morning             = require("./morning");                   // 毎朝紹介する漫画データ
 const birthday            = require('./birthday');                  // 誕生日キャラクターデータ
 const manga_introduction  = require('./manga-introduction');        // 紹介する漫画データ
+const manga_author        = require("./manga-author");              // 紹介する著者データ
 const this_week_manga     = require("./this-week-manga");           // 今週発売される漫画データ
 const count_manga         = require("./count-manga");               // 漫画カウントダウンデータ
 const not_favo_and_ret    = require("./not-favorite-and-retweet");  // ふぁぼりつする機能のデータ
@@ -145,7 +146,38 @@ let number_of_people_followed = 0;  // フォローした人数
       }
 
       {  // 漫画紹介文
-        if((today_hour > 8) && (today_hour < 21)){
+        if((today_hour === 15) && (today_min === 0)){
+          db.all("select * from mangaindex2", (err, rows) => {
+            let mangaIndex = rows[0].num;
+            text = manga_introduction.data[mangaIndex][0];
+            img  = require('fs').readFileSync(manga_introduction.data[mangaIndex][1]);
+
+            bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
+              if(err) {
+                console.log(err);
+              }else{
+                bot.lilyBot.post(api.createTweet, {status: text, media_ids: img.media_id_string}, function(err, tweet, res) {
+                  if(err) {
+                    console.log(err);
+                  }else{
+                    console.log("\n漫画紹介をツイートしました！");
+                  }
+                });
+              }
+            });
+
+            mangaIndex++;
+
+            if(mangaIndex === manga_introduction.data.length){
+              mangaIndex = 0;
+              db.run("update mangaindex2 set num = ?", mangaIndex);
+            }else{
+              db.run("update mangaindex2 set num = ?", mangaIndex);
+            }
+          });
+        }
+
+        /*if((today_hour > 8) && (today_hour < 21)){
           if(today_min === 20){
             try{
               text = manga_introduction.data[manga_introduction.count][0];
@@ -168,6 +200,39 @@ let number_of_people_followed = 0;  // フォローした人数
             }
             manga_introduction.count++;
           }
+        }*/
+      }
+
+      {  // 百合著者紹介文
+        if((today_hour === 18) && (today_min === 0)){
+          db.all("select * from mangaindex3", (err, rows) => {
+            let mangaIndex = rows[0].num;
+            text = manga_author.data[mangaIndex][0];
+            img = require('fs').readFileSync(manga_author.data[mangaIndex][1]);
+
+            bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
+              if(err) {
+                console.log(err);
+              }else{
+                bot.lilyBot.post(api.createTweet, {status: text, media_ids: img.media_id_string}, function(err, tweet, res) {
+                  if(err) {
+                    console.log(err);
+                  }else{
+                    console.log("\n著者の紹介文をツイートしました！");
+                  }
+                });
+              }
+            });
+
+            mangaIndex++;
+
+            if(mangaIndex === manga_author.data.length){
+              mangaIndex = 0;
+              db.run("update mangaindex3 set num = ?", mangaIndex);
+            }else{
+              db.run("update mangaindex3 set num = ?", mangaIndex);
+            }
+          });
         }
       }
       
