@@ -176,31 +176,6 @@ let number_of_people_followed = 0;  // フォローした人数
             }
           });
         }
-
-        /*if((today_hour > 8) && (today_hour < 21)){
-          if(today_min === 20){
-            try{
-              text = manga_introduction.data[manga_introduction.count][0];
-              img  = require('fs').readFileSync(manga_introduction.data[manga_introduction.count][1]);
-              bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
-                if(err) {
-                  console.log(err);
-                }else{
-                  bot.lilyBot.post(api.createTweet, {status: text, media_ids: img.media_id_string}, function(err, tweet, res) {
-                    if(err) {
-                      console.log(err);
-                    }else{
-                      console.log("\n漫画紹介をツイートしました！");
-                    }
-                  });
-                }
-              });
-            }catch{
-              console.log("\n\nAn unexpected error has occurred.\n\n");
-            }
-            manga_introduction.count++;
-          }
-        }*/
       }
 
       {  // 百合著者紹介文
