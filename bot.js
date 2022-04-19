@@ -665,7 +665,7 @@ let number_of_people_followed = 0;  // フォローした人数
                                     const check = rows.some(b => b.name === user.user.screen_name);
                                     if(check === false){
                                       if(number_of_people_followed < 6){
-                                        if(follow === 2){
+                                        if(follow === 3){
                                           return;
                                         }else{
                                           follow++;
@@ -725,7 +725,7 @@ let number_of_people_followed = 0;  // フォローした人数
                         if(follower.protected === false){
                           if(follower.friends_count / follower.followers_count >= 1){
                             if(number_of_people_followed < 6){
-                              if(follow === 2){
+                              if(follow === 3){
                                 return;
                               }else{
                                 follow++;
@@ -740,52 +740,6 @@ let number_of_people_followed = 0;  // フォローした人数
                                 });
                               }
                             }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              });
-            }
-          }
-        });
-      }else if(today_min === 40){   // リストのメンバーをフォロー
-        db.all("select * from followslist", (err, rows) => {
-          if(err){
-            return;
-          }else{
-            if(rows.length >= 90){
-              return;
-            }else{
-              bot.lilyBot.get(api.listMember, /*百合の民*/{list_id: "1267302911144419329", count: 5000}, function(err, members, res){
-                if(members.users){
-                  for(let member of members.users){
-                    if(member.screen_name !== "maki_lily_bot"){
-                      if(member.following === false){
-                        if(member.protected === false){
-                          if(member.friends_count / member.followers_count >= 1){
-                            db.all("select * from muteusers", (err, rows) => {
-                              const check = rows.some(b => b.name === member.screen_name);
-                              if(check === false){
-                                if(number_of_people_followed < 6){
-                                  if(follow === 2){
-                                    return;
-                                  }else{
-                                    follow++;
-                                    number_of_people_followed++;
-                                    bot.lilyBot.post(api.createFollow, {screen_name: member.screen_name}, function(err, follow, res){
-                                      console.log('\nリストメンバーの' + member.name + "さんをフォローしました！");
-                                    });
-                                    db.run(`insert into followslist(name, month, date, year) values(?, ?, ?, ?)`, member.screen_name, today_month, today_date, today_year, (err) => {
-                                      if(err){
-                                        return;
-                                      }
-                                    });
-                                  }
-                                }
-                              }
-                            });
                           }
                         }
                       }
