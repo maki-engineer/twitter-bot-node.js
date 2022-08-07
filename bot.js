@@ -2,7 +2,7 @@
 
 // SQLite導入
 const sqlite3             = require('sqlite3');
-const db                  = new sqlite3.Database('follow.db');
+const db                  = new sqlite3.Database('../follow.db');
 
 const bot                 = require("./twitter-api-key");           // 百合botのトークンデータ
 const api                 = require("./api");                       // Twitter APIデータ
