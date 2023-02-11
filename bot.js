@@ -925,6 +925,10 @@ let number_of_people_followed = 0;  // フォローした人数
         });
       }
     }
+
+    {  // 23時に自動で停止する機能
+      if((today_hour === 23) && (today_min === 0)) process.exit();
+    }
   
   }, 60_000);  // １分ごとに機能している
 }
@@ -1050,4 +1054,3 @@ let number_of_people_followed = 0;  // フォローした人数
 
   }, 15_000);  // １５秒ごとに機能している
 }
-
