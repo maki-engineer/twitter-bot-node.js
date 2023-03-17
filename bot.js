@@ -278,7 +278,7 @@ let number_of_people_followed = 0;  // フォローした人数
             }
           }else if(today_day === 3){  // 水曜日
             try{
-              text = "百合を愛する全ての方におすすめしたいカフェ【百合カフェanchor】\n\n新宿三丁目にあるカフェで、1,000冊以上の百合作品を読むことが出来ます。是非一度足を運んでみてください♪\n\n百合カフェanchorさんのアカウントはこちら→(@anchor_staff) #百合カフェanchor";
+              text = "百合を愛する全ての方におすすめしたいカフェ【百合カフェanchor】\n\n新宿三丁目にあるカフェで、1,000冊以上の百合作品を読むことが出来ます。是非一度足を運んでみてください♪\n\n百合カフェanchorさんのアカウントはこちら→(@ anchor_staff) #百合カフェanchor";
               img  = require('fs').readFileSync("img/anchor.jpg");
               bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
                 if(err) {
@@ -292,15 +292,6 @@ let number_of_people_followed = 0;  // フォローした人数
                     }
                   });
                 }
-              });
-            }catch{
-              console.log("\n\nAn unexpected error has occurred.\n\n");
-            }
-          }else if(today_day === 5){  // 金曜日
-            try{
-              text = "こちらは【とある百合サイト】です！\n\n・百合botを作成したまき(@MKRKL)が今まで読んできた百合作品を紹介した百合漫画サイトがあります。\n\n・百合作品をクイズ形式で楽しめる百合センター試験サイトがあります。\n\nお時間がある時に覗いてみてください♪\nhttps://mysite2-e2145.web.app/";
-              bot.lilyBot.post(api.createTweet, {status: text}, function(err, tweet, res){
-                console.log("\n下記の内容をツイートしました！\n\n" + tweet.text);
               });
             }catch{
               console.log("\n\nAn unexpected error has occurred.\n\n");
