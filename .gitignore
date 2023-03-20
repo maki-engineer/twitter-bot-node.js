@@ -1,61 +1,24 @@
-# 画像フォルダ
 img
-
-# TwitterのAPI一覧
 api.js
-
-# 誕生日データ
 birthday.js
-
-# bot 試作用ファイル
 bot2.js
-
-# 発売日をカウントする漫画データ
 count-manga.js
-
-# 関数データ
 function.js
-
-# ハッシュタグデータ
 hashtag.js
-
-# 紹介する漫画データ
 manga-introduction.js
-
-# 紹介する著者データ
 manga-author.js
-
-# 朝に紹介する漫画データ
 morning.js
-
-# 特定のアカウントデータ
 not-favorite-and-retweet.js
-
-# 返信して漫画を紹介するデータ
 reply-introduction.js
-
-# 返信してランダムに漫画をおすすめするデータ
 reply-recommend.js
-
-# 今週発売される漫画データ
 this-week-manga.js
-
-# 特定のユーザーのタイムラインデータ
 timeline.js
-
-# アルゴリズムとかデータベース試作用
 try.js
-
-# botを操作するためのAPIキー(極秘)
 twitter-api-key.js
-
-# botのリモートリポジトリの情報とか(極秘)
 botの情報.txt
-
-# データベース情報(極秘)
 follow.db
-
-# その他
-mus.js
 .vscode
 lily_bot_login.bat
+data
+function
+test
