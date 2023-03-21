@@ -450,33 +450,16 @@ let number_of_people_followed = 0;  // フォローした人数
             timeline.data = def.shuffle(timeline.data);
             timeline.count      = 0;
             bot.lilyBot.get(api.getTimeline, timeline.data[timeline.count], function(error, search, res) {
-              if(Array.isArray(search)){
-                for(let timeline of search) {
-                  if(timeline.retweeted === true) {
+              for(let timeline of search) {
+                if(timeline.retweeted === true) {
+                  continue;
+                }else{
+                  if(timeline.in_reply_to_status_id !== null) {
                     continue;
                   }else{
-                    if(timeline.in_reply_to_status_id !== null) {
-                      continue;
-                    }else{
-                      if(timeline.text.startsWith("RT") === true){  // リツイートしたツイートなら、百合botのツイートだけは何もしないようにする
-                        if(timeline.retweeted_status.user.id_str === "1299272312156372994"){
-                          continue;
-                        }else{
-                          bot.lilyBot.post(api.createFavorite, {id: timeline.id_str}, function(err, favo, res) {
-                            if(err) {
-                              console.log(err);
-                            }else{
-                              console.log('\n' + favo.user.name + 'さんのツイートにいいねしました！');
-                            };
-                          });
-                          bot.lilyBot.post(api.createRetweet, {id: timeline.id_str}, function(err, favo, res) {
-                            if(err) {
-                              console.log(err);
-                            }else{
-                              console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
-                            }
-                          });
-                        }
+                    if(timeline.text.startsWith("RT") === true){  // リツイートしたツイートなら、百合botのツイートだけは何もしないようにする
+                      if(timeline.retweeted_status.user.id_str === "1299272312156372994"){
+                        continue;
                       }else{
                         bot.lilyBot.post(api.createFavorite, {id: timeline.id_str}, function(err, favo, res) {
                           if(err) {
@@ -493,6 +476,21 @@ let number_of_people_followed = 0;  // フォローした人数
                           }
                         });
                       }
+                    }else{
+                      bot.lilyBot.post(api.createFavorite, {id: timeline.id_str}, function(err, favo, res) {
+                        if(err) {
+                          console.log(err);
+                        }else{
+                          console.log('\n' + favo.user.name + 'さんのツイートにいいねしました！');
+                        };
+                      });
+                      bot.lilyBot.post(api.createRetweet, {id: timeline.id_str}, function(err, favo, res) {
+                        if(err) {
+                          console.log(err);
+                        }else{
+                          console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
+                        }
+                      });
                     }
                   }
                 }
@@ -501,33 +499,16 @@ let number_of_people_followed = 0;  // フォローした人数
             timeline.count++;
           }else{
             bot.lilyBot.get(api.getTimeline, timeline.data[timeline.count], function(error, search, res) {
-              if(Array.isArray(search)){
-                for(let timeline of search) {
-                  if(timeline.retweeted === true) {
+              for(let timeline of search) {
+                if(timeline.retweeted === true) {
+                  continue;
+                }else{
+                  if(timeline.in_reply_to_status_id !== null) {
                     continue;
                   }else{
-                    if(timeline.in_reply_to_status_id !== null) {
-                      continue;
-                    }else{
-                      if(timeline.text.startsWith("RT") === true){  // リツイートしたツイートなら、百合botのツイートだけは何もしないようにする
-                        if(timeline.retweeted_status.user.id_str === "1299272312156372994"){
-                          continue;
-                        }else{
-                          bot.lilyBot.post(api.createFavorite, {id: timeline.id_str}, function(err, favo, res) {
-                            if(err) {
-                              console.log(err);
-                            }else{
-                              console.log('\n' + favo.user.name + 'さんのツイートにいいねしました！');
-                            };
-                          });
-                          bot.lilyBot.post(api.createRetweet, {id: timeline.id_str}, function(err, favo, res) {
-                            if(err) {
-                              console.log(err);
-                            }else{
-                              console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
-                            }
-                          });
-                        }
+                    if(timeline.text.startsWith("RT") === true){  // リツイートしたツイートなら、百合botのツイートだけは何もしないようにする
+                      if(timeline.retweeted_status.user.id_str === "1299272312156372994"){
+                        continue;
                       }else{
                         bot.lilyBot.post(api.createFavorite, {id: timeline.id_str}, function(err, favo, res) {
                           if(err) {
@@ -544,6 +525,21 @@ let number_of_people_followed = 0;  // フォローした人数
                           }
                         });
                       }
+                    }else{
+                      bot.lilyBot.post(api.createFavorite, {id: timeline.id_str}, function(err, favo, res) {
+                        if(err) {
+                          console.log(err);
+                        }else{
+                          console.log('\n' + favo.user.name + 'さんのツイートにいいねしました！');
+                        };
+                      });
+                      bot.lilyBot.post(api.createRetweet, {id: timeline.id_str}, function(err, favo, res) {
+                        if(err) {
+                          console.log(err);
+                        }else{
+                          console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
+                        }
+                      });
                     }
                   }
                 }
