@@ -553,66 +553,62 @@ let number_of_people_followed = 0;  // フォローした人数
 
     {  // フォローしてくれた人をフォローする機能
       if(today_min % 15 === 0){  // １５分ごと
-        try{
-          bot.lilyBot.get(api.followerList, api.maki_lily_bot, function(err, list, res) {
-            if(err){
-              console.log(err);
-            }else{
-              if(list){
-                if(list.users){
-                  for(let followers of list.users) {
-                    if(followers.muting) {
-                      continue;
-                    }else{
-                      if(followers.follow_request_sent) {  // すでに百合botが鍵垢にリクエストを送っていたら無視
-                        continue;
-                      }else {
-                        if(followers.following){
-                          bot.lilyBot.post(api.createTweet, {status: "@" + followers.screen_name + " " + followers.name + "さん、百合botをフォローして頂き、ありがとうございます♪\n最新の百合情報を提供したり、百合作品を紹介したりしています。\nあなたのお役に立つことが出来たらすごく嬉しいです。\nこれからもよろしくお願いします！"}, function(error, reply, res) {
-                            if(error) {
-                              console.log(error);
-                            }
-                          });
-                          bot.lilyBot.post(api.createMute, {user_id: followers.id_str}, function(err, mute, res) {
-                            if(err) {
-                              console.log(err);
-                            }else{
-                              console.log('\n' + followers.name + "さんをミュートしました！")
-                            }
-                          });
-                          db.run(`delete from followslist where name = ?`, followers.screen_name);
-                          if(number_of_people_followed !== 0){
-                            number_of_people_followed--;
-                          }
-                        }else{
-                          bot.lilyBot.post(api.createFollow, {user_id: followers.id_str}, function(err, follow, res) {
-                            if(err) {
-                              console.log(err);
-                            }else{
-                              console.log('\n' + followers.name + "さんからフォローされました！");
-                            }
-                          });
-                          bot.lilyBot.post(api.createTweet, {status: "@" + followers.screen_name + " " + followers.name + "さん、百合botをフォローして頂き、ありがとうございます♪\n最新の百合情報を提供したり、百合作品を紹介したりしています。\nあなたのお役に立つことが出来たらすごく嬉しいです。\nこれからもよろしくお願いします！"}, function(error, reply, res) {
-                            if(error) {
-                              console.log(error);
-                            }
-                          });
-                          bot.lilyBot.post(api.createMute, {user_id: followers.id_str}, function(err, mute, res) {
-                            if(err) {
-                              console.log(err);
-                            }
-                          });
+        bot.lilyBot.get(api.followerList, api.maki_lily_bot, function(err, list, res) {
+          if(err){
+            console.log(err);
+          }else{
+            try {
+              for(let followers of list.users) {
+                if(followers.muting) {
+                  continue;
+                }else{
+                  if(followers.follow_request_sent) {  // すでに百合botが鍵垢にリクエストを送っていたら無視
+                    continue;
+                  }else {
+                    if(followers.following){
+                      bot.lilyBot.post(api.createTweet, {status: "@" + followers.screen_name + " " + followers.name + "さん、百合botをフォローして頂き、ありがとうございます♪\n最新の百合情報を提供したり、百合作品を紹介したりしています。\nあなたのお役に立つことが出来たらすごく嬉しいです。\nこれからもよろしくお願いします！"}, function(error, reply, res) {
+                        if(error) {
+                          console.log(error);
                         }
+                      });
+                      bot.lilyBot.post(api.createMute, {user_id: followers.id_str}, function(err, mute, res) {
+                        if(err) {
+                          console.log(err);
+                        }else{
+                          console.log('\n' + followers.name + "さんをミュートしました！")
+                        }
+                      });
+                      db.run(`delete from followslist where name = ?`, followers.screen_name);
+                      if(number_of_people_followed !== 0){
+                        number_of_people_followed--;
                       }
+                    }else{
+                      bot.lilyBot.post(api.createFollow, {user_id: followers.id_str}, function(err, follow, res) {
+                        if(err) {
+                          console.log(err);
+                        }else{
+                          console.log('\n' + followers.name + "さんからフォローされました！");
+                        }
+                      });
+                      bot.lilyBot.post(api.createTweet, {status: "@" + followers.screen_name + " " + followers.name + "さん、百合botをフォローして頂き、ありがとうございます♪\n最新の百合情報を提供したり、百合作品を紹介したりしています。\nあなたのお役に立つことが出来たらすごく嬉しいです。\nこれからもよろしくお願いします！"}, function(error, reply, res) {
+                        if(error) {
+                          console.log(error);
+                        }
+                      });
+                      bot.lilyBot.post(api.createMute, {user_id: followers.id_str}, function(err, mute, res) {
+                        if(err) {
+                          console.log(err);
+                        }
+                      });
                     }
                   }
                 }
               }
+            } catch {
+              console.log("\nフォローしてくれた人のデータが見つかりませんでした！");
             }
-          });
-        }catch{
-          console.log("\n\nAn unexpected error has occurred.\n\n");
-        }
+          }
+        });
       }
     }
 
