@@ -354,38 +354,36 @@ let number_of_people_followed = 0;  // フォローした人数
             hashtag.data  = def.shuffle(hashtag.data);
             hashtag.count = 0;
             bot.lilyBot.get(api.searchTweet, hashtag.data[hashtag.count], function(err, search, res) {
-              if(search){
+              try {
                 for(let searches of search.statuses) {
                   if(searches.text.startsWith("RT") === true){  // リツイートしているツイートは無視
                     continue;
                   }else{
                     bot.lilyBot.get("statuses/lookup", {id: searches.id_str}, function(err, tweets, res){
-                      if(tweets){
-                        for(let tweet of tweets){
-                          if(tweet.retweeted === true){
+                      for(let tweet of tweets){
+                        if(tweet.retweeted === true){
+                          continue;
+                        }else{
+                          if(tweet.in_reply_to_status_id !== null){  // リプは飛ばす
                             continue;
                           }else{
-                            if(tweet.in_reply_to_status_id !== null){  // リプは飛ばす
+                            if(not_favo_and_ret.data.includes(tweet.user.id_str)){  // 特定ユーザーは飛ばす
                               continue;
                             }else{
-                              if(not_favo_and_ret.data.includes(tweet.user.id_str)){  // 特定ユーザーは飛ばす
-                                continue;
-                              }else{
-                                bot.lilyBot.post(api.createFavorite, {id: tweet.id_str}, function(err, favo, res) {
-                                  if(err) {
-                                    console.log(err);
-                                  }else{
-                                    console.log('\n' + favo.user.name + "さんのツイートにいいねしました！");
-                                  };
-                                });
-                                bot.lilyBot.post(api.createRetweet, {id: tweet.id_str}, function(err, favo, res) {
-                                  if(err) {
-                                    console.log(err);
-                                  }else{
-                                    console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
-                                  };
-                                });
-                              }
+                              bot.lilyBot.post(api.createFavorite, {id: tweet.id_str}, function(err, favo, res) {
+                                if(err) {
+                                  console.log(err);
+                                }else{
+                                  console.log('\n' + favo.user.name + "さんのツイートにいいねしました！");
+                                };
+                              });
+                              bot.lilyBot.post(api.createRetweet, {id: tweet.id_str}, function(err, favo, res) {
+                                if(err) {
+                                  console.log(err);
+                                }else{
+                                  console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
+                                };
+                              });
                             }
                           }
                         }
@@ -393,43 +391,43 @@ let number_of_people_followed = 0;  // フォローした人数
                     });
                   }
                 }
+              } catch {
+                console.log("\n特定のハッシュタグツイが見つかりませんでした！");
               }
             });
             hashtag.count++;
           }else{
             bot.lilyBot.get(api.searchTweet, hashtag.data[hashtag.count], function(err, search, res) {
-              if(search){
+              try {
                 for(let searches of search.statuses) {
                   if(searches.text.startsWith("RT") === true){  // リツイートしているツイートは無視
                     continue;
                   }else{
                     bot.lilyBot.get("statuses/lookup", {id: searches.id_str}, function(err, tweets, res){
-                      if(tweets){
-                        for(let tweet of tweets){
-                          if(tweet.retweeted === true){
+                      for(let tweet of tweets){
+                        if(tweet.retweeted === true){
+                          continue;
+                        }else{
+                          if(tweet.in_reply_to_status_id !== null){  // リプは飛ばす
                             continue;
                           }else{
-                            if(tweet.in_reply_to_status_id !== null){  // リプは飛ばす
+                            if(not_favo_and_ret.data.includes(tweet.user.id_str)){  // 特定ユーザーは飛ばす
                               continue;
                             }else{
-                              if(not_favo_and_ret.data.includes(tweet.user.id_str)){  // 特定ユーザーは飛ばす
-                                continue;
-                              }else{
-                                bot.lilyBot.post(api.createFavorite, {id: tweet.id_str}, function(err, favo, res) {
-                                  if(err) {
-                                    console.log(err);
-                                  }else{
-                                    console.log('\n' + favo.user.name + "さんのツイートにいいねしました！");
-                                  };
-                                });
-                                bot.lilyBot.post(api.createRetweet, {id: tweet.id_str}, function(err, favo, res) {
-                                  if(err) {
-                                    console.log(err);
-                                  }else{
-                                    console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
-                                  };
-                                });
-                              }
+                              bot.lilyBot.post(api.createFavorite, {id: tweet.id_str}, function(err, favo, res) {
+                                if(err) {
+                                  console.log(err);
+                                }else{
+                                  console.log('\n' + favo.user.name + "さんのツイートにいいねしました！");
+                                };
+                              });
+                              bot.lilyBot.post(api.createRetweet, {id: tweet.id_str}, function(err, favo, res) {
+                                if(err) {
+                                  console.log(err);
+                                }else{
+                                  console.log('\n' + favo.retweeted_status.user.name + 'さんのツイートをリツイートしました！');
+                                };
+                              });
                             }
                           }
                         }
@@ -437,6 +435,8 @@ let number_of_people_followed = 0;  // フォローした人数
                     });
                   }
                 }
+              } catch {
+                console.log("\n特定のハッシュタグツイが見つかりませんでした！");
               }
             });
             hashtag.count++;
