@@ -626,7 +626,7 @@ let number_of_people_followed = 0;  // フォローした人数
                 if(err){
                   console.log(err);
                 }else{
-                  if(users){
+                  try {
                     for(let user of users.statuses){
                       if(user.in_reply_to_status_id){
                         continue;
@@ -684,6 +684,8 @@ let number_of_people_followed = 0;  // フォローした人数
                         }
                       }
                     }
+                  } catch {
+                    console.log("\nフォローする人のデータが見つかりませんでした！");
                   }
                 }
               });
@@ -702,31 +704,35 @@ let number_of_people_followed = 0;  // フォローした人数
                 if(err){
                   console.log(err);
                 }else{
-                  for(let follower of followers.users){
-                    if(follower.muting === false){
-                      if(follower.following === false){
-                        if(follower.protected === false){
-                          if(follower.friends_count / follower.followers_count >= 1){
-                            if(number_of_people_followed < 6){
-                              if(follow === 3){
-                                return;
-                              }else{
-                                follow++;
-                                number_of_people_followed++;
-                                bot.lilyBot.post(api.createFollow, {screen_name: follower.screen_name}, function(err, follow, res){
-                                  console.log('\n百合ナビのフォロワーの' + follower.name + "さんをフォローしました！");
-                                });
-                                db.run(`insert into followslist(name, month, date, year) values(?, ?, ?, ?)`, follower.screen_name, today_month, today_date, today_year, (err) => {
-                                  if(err){
-                                    return;
-                                  }
-                                });
+                  try {
+                    for(let follower of followers.users){
+                      if(follower.muting === false){
+                        if(follower.following === false){
+                          if(follower.protected === false){
+                            if(follower.friends_count / follower.followers_count >= 1){
+                              if(number_of_people_followed < 6){
+                                if(follow === 3){
+                                  return;
+                                }else{
+                                  follow++;
+                                  number_of_people_followed++;
+                                  bot.lilyBot.post(api.createFollow, {screen_name: follower.screen_name}, function(err, follow, res){
+                                    console.log('\n百合ナビのフォロワーの' + follower.name + "さんをフォローしました！");
+                                  });
+                                  db.run(`insert into followslist(name, month, date, year) values(?, ?, ?, ?)`, follower.screen_name, today_month, today_date, today_year, (err) => {
+                                    if(err){
+                                      return;
+                                    }
+                                  });
+                                }
                               }
                             }
                           }
                         }
                       }
                     }
+                  } catch {
+                    console.log("\nフォローする人のデータが見つかりませんでした！");
                   }
                 }
               });
