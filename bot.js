@@ -5,6 +5,7 @@ const sqlite3             = require('sqlite3');
 const db                  = new sqlite3.Database('../follow.db');
 
 const bot                 = require("./twitter-api-key");           // 百合botのトークンデータ
+const openai              = require("./chat-gpt-api-key");          // chatGPTのデータ
 const api                 = require("./api");                       // Twitter APIデータ
 const def                 = require("./function");                  // 関数データ
 const morning             = require("./morning");                   // 毎朝紹介する漫画データ
@@ -18,6 +19,10 @@ const hashtag             = require("./hashtag");                   // ハッシ
 const timeline            = require("./timeline");                  // 特定のユーザーのタイムラインのデータ
 const reply_recommend     = require("./reply-recommend");           // 返信するのに必要なデータ１
 const reply_introduction  = require("./reply-introduction");        // 返信するのに必要なデータ２
+const http                = require("http");
+const jsdom               = require("jsdom");
+const { JSDOM }           = jsdom;
+const url                 = "http://yurinavi.com/yuri-calendar/";
 
 const { post }            = require('request');
 const { nextTick }        = require('process');
@@ -935,12 +940,13 @@ let number_of_people_followed = 0;  // フォローした人数
           }else{
             // 巻き込みリプは無視する
             if(mention[0].entities.user_mentions.length === 1){
-              // startsWithメソッドが使えるように配列で分ける
-              replyText = mention[0].text.split(" ");
+              // メンション部分は切り取る
+              replyText = mention[0].text.substr(15);
+              replyText = replyText.replace(/\r?\n/g, '');
 
               // 紹介している漫画を含んだリプライならその漫画を紹介していいねする
               for(let lily_introduction in reply_introduction.data){
-                if(replyText[1].startsWith(lily_introduction)){
+                if(replyText.startsWith(lily_introduction)){
                   img = require('fs').readFileSync(reply_introduction.data[lily_introduction][1]);
                   bot.lilyBot.post(api.acquisitionImage, {media: img}, function(err, img, res) {
                     if(err) {
@@ -989,7 +995,7 @@ let number_of_people_followed = 0;  // フォローした人数
                     console.log('\nこの内容にいいねしました！\n\n' + mention[0].text);
                   };
                 });
-              }else if((replyText[1].startsWith("ヘルプ")) || (replyText[1].startsWith("へるぷ")) || (replyText[1].startsWith("Help")) || (replyText[1].startsWith("help"))) {
+              }else if((replyText.startsWith("ヘルプ")) || (replyText.startsWith("へるぷ")) || (replyText.startsWith("Help")) || (replyText.startsWith("help"))) {
                 // ヘルプ系のリプライなら百合botの機能について説明していいねする
                 bot.lilyBot.post(api.createTweet, {status: "@" + mention[0].user.screen_name + " ・百合bot宛てに「おすすめ」などと呟いて頂けたら、まきが今まで読んできた百合作品を紹介します！\n\n・百合bot宛てに百合作品の作品名を含めて呟いて頂けたら、その作品について紹介します！", in_reply_to_status_id: mention[0].id_str}, function(err, reply, res) {
                   if(err) {
@@ -1005,7 +1011,7 @@ let number_of_people_followed = 0;  // フォローした人数
                     console.log('\nこの内容にいいねしました！\n\n' + mention[0].text);
                   };
                 });
-              }else if((replyText[1].startsWith('おすすめ')) || (replyText[1].startsWith("オススメ"))) {
+              }else if((replyText.startsWith('おすすめ')) || (replyText.startsWith("オススメ"))) {
                 // おすすめを含んだリプライならおすすめの漫画を紹介していいねする
                 reply_recommend.recommend = reply_recommend.data[Math.floor(Math.random() * reply_recommend.data.length)];
                 img = require('fs').readFileSync(reply_recommend.recommend[1]);
@@ -1025,13 +1031,78 @@ let number_of_people_followed = 0;  // フォローした人数
                 bot.lilyBot.post(api.createFavorite, {id: mention[0].id_str}, function(err, favo, res) {
                   console.log("\nこの内容にいいねしました！\n\n" + mention[0].text);
                 });
+              }else if (replyText.startsWith("新刊")) {
+                let notRelease = true;
+                let knowMangaTitle = replyText.substr(3);
+
+                http.get(url, res => {
+                  let html = "";
+                
+                  res.on("data", line => html += line);
+                  res.on("end", () => {
+                    const dom = new JSDOM(html);
+                    const mangaTable = dom.window.document.getElementsByClassName("tablepress tablepress-id-74").item(0).querySelector("tbody").querySelectorAll("tr");
+                    let date = "";
+                    let mangaTitle = "";
+                
+                    mangaTable.forEach(row => {
+                      let spanTag = row.querySelector("span");
+                      let aTags = row.querySelectorAll("a");
+                      if (aTags.length === 1) {
+                        mangaTitle = aTags[0];
+                      } else if (aTags.length === 2) {
+                        mangaTitle = aTags[1];
+                      }
+                
+                      if (spanTag) {
+                        if (spanTag.textContent.includes("/")) {
+                          if (date !== spanTag.textContent) date = spanTag.textContent
+                        }
+                      }
+                
+                      if (mangaTitle) {
+                        if (mangaTitle.textContent.includes(knowMangaTitle)) {
+                          let releaseDateSet = new Date(date);
+                          let releaseMonth = releaseDateSet.getMonth() + 1;
+                          let releaseDate = releaseDateSet.getDate();
+
+                          bot.lilyBot.post(api.createTweet, {status: "@" + mention[0].user.screen_name + " " + releaseMonth + "月" + releaseDate + "日に『" + mangaTitle.textContent + "』が発売されます！お楽しみに！", in_reply_to_status_id: mention[0].id_str}, function(err, reply, res) {
+                            if(err) {
+                              console.log(err);
+                            }else{
+                              console.log("\n下記の内容をツイートしました！\n\n" + reply.text);
+                            };
+                          });
+                          bot.lilyBot.post(api.createFavorite, {id: mention[0].id_str}, function(err, favo, res) {
+                            console.log("\nこの内容にいいねしました！\n\n" + mention[0].text);
+                          });
+                          notRelease = false;
+                        }
+                      }
+                
+                    });
+                
+                    if (notRelease) {
+                      bot.lilyBot.post(api.createTweet, {status: "@" + mention[0].user.screen_name + " 指定された作品の新刊情報はまだないようです😢", in_reply_to_status_id: mention[0].id_str}, function(err, reply, res) {
+                        if(err) {
+                          console.log(err);
+                        }else{
+                          console.log("\n下記の内容をツイートしました！\n\n" + reply.text);
+                        };
+                      });
+                      bot.lilyBot.post(api.createFavorite, {id: mention[0].id_str}, function(err, favo, res) {
+                        console.log("\nこの内容にいいねしました！\n\n" + mention[0].text);
+                      });
+                    }
+                  });
+                });
               }else{
                 // いいねだけをする
                 bot.lilyBot.post(api.createFavorite, {id: mention[0].id_str}, function(err, favo, res) {
                   if(err) {
                     console.log(err);
                   }else{
-                    console.log('\nこの内容にいいねしました！\n\n' + mention[0].text);
+                    console.log('\nこの内容にいいねしました！\n\n' + replyText);
                   };
                 });
               }
