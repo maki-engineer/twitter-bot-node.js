@@ -588,23 +588,28 @@ let number_of_people_followed = 0;  // フォローした人数
                         number_of_people_followed--;
                       }
                     }else{
-                      bot.lilyBot.post(api.createFollow, {user_id: followers.id_str}, function(err, follow, res) {
-                        if(err) {
-                          console.log(err);
-                        }else{
-                          console.log('\n' + followers.name + "さんからフォローされました！");
+                      // フォロワー数が200人以上でFF比が1.2未満の人をフォロー
+                      if (followers.followers_count >= 200) {
+                        if (followers.friends_count / followers.followers_count <= 1.2) {
+                          bot.lilyBot.post(api.createFollow, {user_id: followers.id_str}, function(err, follow, res) {
+                            if(err) {
+                              console.log(err);
+                            }else{
+                              console.log('\n' + followers.name + "さんからフォローされました！");
+                            }
+                          });
+                          bot.lilyBot.post(api.createTweet, {status: "@" + followers.screen_name + " " + followers.name + "さん、百合botをフォローして頂き、ありがとうございます♪\n最新の百合情報を提供したり、百合作品を紹介したりしています。\nあなたのお役に立つことが出来たらすごく嬉しいです。\nこれからもよろしくお願いします！"}, function(error, reply, res) {
+                            if(error) {
+                              console.log(error);
+                            }
+                          });
+                          bot.lilyBot.post(api.createMute, {user_id: followers.id_str}, function(err, mute, res) {
+                            if(err) {
+                              console.log(err);
+                            }
+                          });
                         }
-                      });
-                      bot.lilyBot.post(api.createTweet, {status: "@" + followers.screen_name + " " + followers.name + "さん、百合botをフォローして頂き、ありがとうございます♪\n最新の百合情報を提供したり、百合作品を紹介したりしています。\nあなたのお役に立つことが出来たらすごく嬉しいです。\nこれからもよろしくお願いします！"}, function(error, reply, res) {
-                        if(error) {
-                          console.log(error);
-                        }
-                      });
-                      bot.lilyBot.post(api.createMute, {user_id: followers.id_str}, function(err, mute, res) {
-                        if(err) {
-                          console.log(err);
-                        }
-                      });
+                      }
                     }
                   }
                 }
