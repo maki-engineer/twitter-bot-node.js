@@ -932,6 +932,18 @@ let number_of_people_followed = 0;  // フォローした人数
   }, 60_000);  // １分ごとに機能している
 }
 
+{
+  let array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+  for (let data of array) {
+    if (data % 2 === 0) {
+      continue;
+    } else {
+      console.log(data);
+    }
+  }
+}
+
 // 返信機能
 {
   setInterval(() => {
