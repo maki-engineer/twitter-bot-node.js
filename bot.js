@@ -933,8 +933,8 @@ let number_of_people_followed = 0;  // フォローした人数
 }
 
 {
-  let data1 = 50;
-  let data2 = 80;
+  // 75と25を足した値を変数化してます。
+  let sumResult = 75 + 25;
 }
 
 // 返信機能
