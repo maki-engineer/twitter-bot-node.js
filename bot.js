@@ -932,6 +932,14 @@ let number_of_people_followed = 0;  // フォローした人数
   }, 60_000);  // １分ごとに機能している
 }
 
+{
+  // ツイートの取得
+  $tweets = Tweet::orderBy('created_at', 'DESC')->where('user_id', $userId)->take(50)->get();
+
+  // フォロワー数の取得(将来必要になる可能性あり)
+  // $followerCount = FollowerRelationship::where('user_id', Auth::id())->count();
+}
+
 // 返信機能
 {
   setInterval(() => {
