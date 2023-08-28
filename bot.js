@@ -932,6 +932,19 @@ let number_of_people_followed = 0;  // フォローした人数
   }, 60_000);  // １分ごとに機能している
 }
 
+{
+  /**
+   * アカウント情報を取得
+   *
+   * @param int $userId
+   * @return array
+   */
+  public function getUserData(): array
+  {
+      return 1;
+  }
+}
+
 // 返信機能
 {
   setInterval(() => {
