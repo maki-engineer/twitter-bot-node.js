@@ -939,7 +939,7 @@ let number_of_people_followed = 0;  // フォローした人数
    * @param int $userId
    * @return array
    */
-  public function getUserData(): array
+  public function getUserData(int $userId): array
   {
       return 1;
   }
