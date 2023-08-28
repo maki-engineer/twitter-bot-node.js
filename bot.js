@@ -936,6 +936,7 @@ let number_of_people_followed = 0;  // フォローした人数
   let x = 10;
   let y = 20;
 
+  // x + yの結果が30以上だったら
   if (x + y >= 30) {
     console.log(1);
   }
