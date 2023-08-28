@@ -27,6 +27,7 @@ const url                 = "http://yurinavi.com/yuri-calendar/";
 const { post }            = require('request');
 const { nextTick }        = require('process');
 const { clearScreenDown } = require('readline');
+const { setTimeout } = require('timers/promises');
 
 // 変数設定
 let img;                            // 投稿する画像
@@ -930,6 +931,12 @@ let number_of_people_followed = 0;  // フォローした人数
     }
   
   }, 60_000);  // １分ごとに機能している
+}
+
+{
+  setTimeout(() => {
+      message.delete();
+  }, 4_000);
 }
 
 // 返信機能
