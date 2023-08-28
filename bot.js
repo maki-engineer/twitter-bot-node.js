@@ -932,6 +932,14 @@ let number_of_people_followed = 0;  // フォローした人数
   }, 60_000);  // １分ごとに機能している
 }
 
+{
+  $company = factory(Company::class)->create();
+
+  factory(Work::class)->create([
+      'company_id' => $company->company_id,
+  ]);
+}
+
 // 返信機能
 {
   setInterval(() => {
