@@ -933,7 +933,8 @@ let number_of_people_followed = 0;  // フォローした人数
 }
 
 {
-  function tast() {
+  function test() {
+
     console.log('Hello, World.');
   }
 }
