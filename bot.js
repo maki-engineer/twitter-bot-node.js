@@ -932,6 +932,12 @@ let number_of_people_followed = 0;  // フォローした人数
   }, 60_000);  // １分ごとに機能している
 }
 
+{
+  function tast() {
+    console.log('Hello, world.');
+  }
+}
+
 // 返信機能
 {
   setInterval(() => {
